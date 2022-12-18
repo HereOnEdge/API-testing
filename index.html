@@ -7,8 +7,15 @@
     <title>cool robot gifs in every size and color  |Choosen Robots</title>
     <style>
         body {
+            display: flex;
+            justify-content: center;
+        }
+        .body {
             display: none;
             justify-content: center;
+        }
+        .timer {
+            font-size: 2rem;
         }
         img {
             width: 120px;
@@ -18,9 +25,12 @@
 </head>
 <body>
     <p></p>
-    <img/>
-    <img class="second"/> 
-    <img src="" alt="" class="third">
+    <p class="timer">Timer: 0</p>
+    <div class="body">
+        <img/>
+        <img class="second"/>
+        <img src="" alt="" class="third">
+    </div>
     <script>
         let img = document.querySelector("img");
         let img2 = document.querySelector(".second");
@@ -33,21 +43,37 @@
             "https://api.giphy.com/v1/gifs/translate?api_key=L6gHXrpGg9WJVMG6561tElCxNz2GyTT7&s=robots",
             "https://api.giphy.com/v1/gifs/translate?api_key=L6gHXrpGg9WJVMG6561tElCxNz2GyTT7&s=joi",
             "https://api.giphy.com/v1/gifs/translate?api_key=L6gHXrpGg9WJVMG6561tElCxNz2GyTT7&s=worldcup"
-        )
-        async function getGifs() {
+            )
+        let timer = 0;
+        function timeCounter() {
+            setTimeout(() => {
+                if(!document.querySelector('.timer')) {
+                    return
+                }
+                ++timer
+                document.querySelector('.timer').textContent = `Timer: ${timer}`
+                for(let i = 0; i< 1 ; i++) {
+                    timeCounter();
+                }
+            }, 1000);
+        }
+        timeCounter()
+        // for(let i = 0; i< 1 ; i++) {
+        //     timeCounter();
+        // }
+        // async function getGifs() {
             for( let i =0; i < urls.length; i++){
-                let request = await fetch(`${urls[i]}`, {mode:"cors", cache:"default"})
+                let request =  fetch(`${urls[i]}`, {mode:"cors", cache:"default"})
                 requests.push(request)
-                let data = await request.json()
-                    imgTags[i].src = data.data.images.original.url
+                request.then(resp => resp.json())
+                .then(data => imgTags[i].src = data.data.images.downsized.url)
+                .catch(() => console.log(`error at image number ${i}`))
             }
             setTimeout(() => {
-                document.querySelector("body").style.display = "flex"
-            }, 3000);
-        }
-        getGifs().catch(() => {
-            console.log(`error at image number ${i}`)
-        })
+                document.querySelector('.timer').remove()
+                document.querySelector(".body").style.display = "flex"
+            }, 4000);
+        // }
             
         // weather api
         let Api_key = '4b8ff3976c38129b270f58272253a7e5';
